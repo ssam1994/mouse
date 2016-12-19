@@ -1,3 +1,6 @@
+%**********************************************
+%Store data for a single session in a struct
+%**********************************************
 function data = LoadSessionData(SessionDataFolder, SessionFileName)
 %Plot results for 2AFC from Bpod.
 load([SessionDataFolder SessionFileName])
@@ -12,6 +15,7 @@ TrialStartTimestamp = SessionData.TrialStartTimestamp;
 
 %Get timestamps of reward times
 RewardTimes = zeros(nTrials);
+TrialTimeouts = zeros(1, nTrials);
 for i = 1:nTrials
     TrialStates = RawEvents.Trial{1, i}.States;
     LeftReward = TrialStates.LeftReward;
@@ -28,11 +32,14 @@ for i = 1:nTrials
     if RightReward(1) > 0
         RewardTimes(i) = RightReward(1);
     end
+    timeouts = RawEvents.Trial{1, i}.States.Timeout;
+    timeouts(isnan(timeouts)) = [];
+    TrialTimeouts(i) = length(timeouts);
 end
-
-TotalCorrect = length(RewardTimes(RewardTimes > 0));
+TotalRewards = length(RewardTimes(RewardTimes > 0));
 data = struct('SessionName', SessionFileName, ...
-    'TotalCorrect', TotalCorrect, ...
+    'TotalRewards', TotalRewards, ...
+    'TrialTimeouts', TrialTimeouts, ...
     'TrialTypes', TrialTypes, ...
     'nTrials', nTrials, ...
     'RawEvents', RawEvents, ...
