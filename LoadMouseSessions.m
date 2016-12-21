@@ -1,14 +1,9 @@
 %**********************************************
 %Store data for each session in a single struct
 %**********************************************
-function [SessionMatrix, yData] = LoadMouseSessions(dir, mouseNumber, ProtocolName)
+function [SessionMatrix, yData] = LoadMouseSessions(SessionDataPath)
 %Change directory to correcy folder
-mouseID = mouseNumber;
-if isnumeric(mouseNumber)
-    mouseID = num2str(mouseNumber);
-end
-
-SessionDataFolder = [dir mouseID '\' ProtocolName '\Session Data\'];
+SessionDataFolder = SessionDataPath;
 s = what(SessionDataFolder);
 matfiles = s.mat;
 
